@@ -24,7 +24,7 @@ import eu.sathra.physics.Body;
  * @author Milosz Moczkowski
  * 
  */
-//TODO: findChildrenById
+// TODO: findChildrenById
 public class SceneNode implements Cloneable {
 
 	private String mId;
@@ -57,7 +57,8 @@ public class SceneNode implements Cloneable {
 	@Deserialize({ "id", "x", "y", "is_visible", "animation", "children",
 			"body", "ai" })
 	@Defaults({ Deserialize.NULL, "0", "0", "true", Deserialize.NULL,
-			Deserialize.NULL, Deserialize.NULL, Deserialize.NULL, Deserialize.NULL })
+			Deserialize.NULL, Deserialize.NULL, Deserialize.NULL,
+			Deserialize.NULL })
 	public SceneNode(String id, float x, float y, boolean isVisible,
 			Animation animation, SceneNode[] children, Body body, Task ai) {
 
@@ -68,7 +69,7 @@ public class SceneNode implements Cloneable {
 		setScale(1, 1);
 		setAIContext(new AIContext(this));
 		setAI(ai);
-		
+
 		if (animation != null)
 			startAnimation(animation);
 
@@ -76,6 +77,13 @@ public class SceneNode implements Cloneable {
 			addChildren(children);
 	}
 
+	/**
+	 * Returns this node string id. This can be used to identify nodes and
+	 * obtaining references to deserialized nodes. See: {@see
+	 * eu.sathra.scene.SceneNode#findChildById(String)}
+	 * 
+	 * @return
+	 */
 	public String getId() {
 		return mId;
 	}
@@ -84,14 +92,29 @@ public class SceneNode implements Cloneable {
 		mId = id;
 	}
 
+	/**
+	 * Get this node's parent
+	 * 
+	 * @return Node's parent or null if it has no parent.
+	 */
 	public SceneNode getParent() {
 		return mParent;
 	}
-	
+
+	/**
+	 * Set a parent of this node. Equivalent of calling
+	 * {@code parent.addChild(node); }
+	 * 
+	 * @param parent
+	 */
 	public void setParent(SceneNode parent) {
 		parent.addChild(this);
 	}
 
+	/**
+	 * Add node to this child.
+	 * @param child
+	 */
 	public void addChild(SceneNode child) {
 		if (child.mParent != null) {
 			child.mParent.removeChild(child);
@@ -112,10 +135,19 @@ public class SceneNode implements Cloneable {
 		child.mParent = null;
 	}
 
+	/**
+	 * Return a copy of an array containing this node's children.
+	 * @return
+	 */
 	public SceneNode[] getChildren() {
 		return mChildren.toArray(new SceneNode[mChildren.size()]);
 	}
 
+	/**
+	 * Searches recursively for a node with a given id.
+	 * @param id
+	 * @return
+	 */
 	public SceneNode findChildById(String id) {
 		for (SceneNode child : mChildren) {
 			if (child.getId() == null && id == null)
@@ -160,12 +192,12 @@ public class SceneNode implements Cloneable {
 
 			gl.glPushMatrix();
 			gl.glTranslatef(getX(), getY(), 0);
-			//gl.glPushMatrix();
+			// gl.glPushMatrix();
 			gl.glScalef(getScaleX(), getScaleY(), 0);
 
 			// Draw yourself
 			draw(gl, time, delta);
-			//gl.glPopMatrix();
+			// gl.glPopMatrix();
 
 			// Draw children
 			SceneNode[] childrenCopy = mChildren
@@ -176,9 +208,9 @@ public class SceneNode implements Cloneable {
 			}
 
 			gl.glPopMatrix();
-			
+
 			// Update AI
-			if(mAITask != null)
+			if (mAITask != null)
 				mAITask.execute(mAIContext, time, delta);
 		}
 	}
@@ -264,37 +296,36 @@ public class SceneNode implements Cloneable {
 
 	public void setAI(Task ai) {
 		mAITask = ai;
-		//mAIContext = new AIContext(this); //TODO: reconsider
-		
-		if(mAITask != null)
+		// mAIContext = new AIContext(this); //TODO: reconsider
+
+		if (mAITask != null)
 			mAITask.onAttach(mAIContext);
 	}
-	
+
 	public AIContext getAIContext() {
 		return mAIContext;
 	}
-	
+
 	public void setAIContext(AIContext context) {
 		mAIContext = context;
 		mAIContext.setOwner(this);
-		
-		if(mAITask != null)
+
+		if (mAITask != null)
 			mAITask.onAttach(mAIContext);
 	}
-	
+
 	public Task getAI() {
 		return mAITask;
 	}
-	
+
 	public void setUserData(Object data) {
 		mUserData = data;
 	}
-	
+
 	public Object getUserData() {
 		return mUserData;
 	}
-	
-	
+
 	protected void draw(GL10 gl, long time, long delta) {
 		// noop
 	}

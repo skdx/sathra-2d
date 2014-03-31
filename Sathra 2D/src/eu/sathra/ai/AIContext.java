@@ -5,6 +5,11 @@ import java.util.Map;
 
 import eu.sathra.scene.SceneNode;
 
+/**
+ * Class for exchanging and persisting state information in AI.
+ * @author Milosz Moczkowski
+ *
+ */
 public class AIContext {
 
 	private Map<String, Object> mVariables = new HashMap<String, Object>();

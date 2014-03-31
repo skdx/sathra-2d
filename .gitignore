@@ -2,6 +2,8 @@
 /build/
 /bin/
 target/
+bin
+gen
  
 # OS Files #
 .DS_Store
@@ -13,6 +15,7 @@ target/
 *.war
 *.ear
 *.db
+*.apk
  
 ######################
 # Windows

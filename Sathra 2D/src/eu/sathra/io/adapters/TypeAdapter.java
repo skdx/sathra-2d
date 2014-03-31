@@ -3,8 +3,14 @@ package eu.sathra.io.adapters;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import eu.sathra.io.annotations.Deserialize;
-
+/**
+ * Class for implementing own deserialization logic. Useful for third-party
+ * library classes.
+ * 
+ * @author Milosz Moczkowski
+ * 
+ * @param <T> Class type this adapter can deserialize.
+ */
 public interface TypeAdapter<T> {
 	T load(String param, JSONObject parent) throws JSONException;
 }

@@ -24,8 +24,60 @@ import eu.sathra.io.adapters.TypeAdapter;
 import eu.sathra.io.adapters.WorldAdapter;
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
-import eu.sathra.io.preprocessors.Preprocessor;
 
+/**
+ * IO is used for deserializing objects from JSON. IO uses annotated constructors and 
+ * methods to create instances. This class is a singleton.
+ * To deserialize object call:
+ * <p>
+ * {@code
+ * public <T> T load(String json, Class<T> clazz)
+ * }
+ * <p>
+ * To designate which constructor should be used for deserialization, use {@see eu.sathra.io.annotations.Deserialize} annotation.
+ * <p>
+ * <pre>
+ * &#064;Deserialize( params={ "name", "age", "is_employed" } )
+ * Person(String name, int age, boolean isEmployed) { ... } 
+ * &#064;Deserialize( params={ "name", "team", null } )
+ * &#064;Defaults( values={ "new player", "team_blue", null } )
+ * Player(String name, Team team, Client client) { ... }
+ * </pre>
+ * <p>
+ * You don't always want to use your constructor for deserialization (e.g. you shouldn't throw 
+ * exceptions in constructor). In that case, define default constructor (doesn't matter if 
+ * private, public or protected) and add Deserialize annotation to any of your methods.
+ * <p>
+ * <pre>
+ * private Texture() { ... }
+ * 
+ * &#064;Deserialize( params={ "filename", "format", "color" } )
+ * &#064;Defaults( values = { null, "RGBA", "0xffffffff" } )
+ * public void load(String path, TexFormat format, ) { ... }
+ * </pre>
+ * <p>
+ * The {@see eu.sathra.io.annotations.Defaults} annotation is optional and provides deserializer default parameter value 
+ * in case it wasn't provided in JSON. If you have any experience in C++ or C# it might remind 
+ * you of "Optional Parameters" mechanism used in those languages.
+ * <p>
+ * But what if you want to serialize a third-party class that you can't modify? What if the 
+ * object is part of a system API and simply to complex to serialize? In that case, you can 
+ * write your own adapter. Consider this example:
+ * <p>
+ * <pre>
+ * // inside MainActivity
+ * 
+ * IO.getInstance().registerAdapter(new TypeAdapter&#60;Context&#62;() {
+ * 		&#064;Override
+ * 		public Context load(String param, JSONObject parent) throws JSONException {
+ * 			return MainActivity.this;
+ * 		}
+ * });
+ * </pre>
+ * 
+ * @author Milosz Moczkowski
+ *
+ */
 public class IO {
 
 	private static final String CLASS_PARAM = "class";
@@ -33,7 +85,6 @@ public class IO {
 	private static IO sInstance = null;
 
 	private Map<Type, TypeAdapter<?>> mAdapters = new HashMap<Type, TypeAdapter<?>>();
-	private Map<String, Preprocessor> mPreprocessors = new HashMap<String, Preprocessor>();
 
 	public static IO getInstance() {
 		if (sInstance == null)
@@ -48,12 +99,14 @@ public class IO {
 		mAdapters.put(World.class, new WorldAdapter());
 	}
 
-	public <T> void registerAdapter(Class<? extends T> clazz, TypeAdapter<? extends T> adapter) {
+	/**
+	 * Registers custom adapter
+	 * @param clazz Type this adapter can handle
+	 * @param adapter Adapter instance
+	 */
+	public <T> void registerAdapter(Class<? extends T> clazz,
+			TypeAdapter<? extends T> adapter) {
 		mAdapters.put(clazz, adapter);
-	}
-
-	public void registerPreprocessor(String var, Preprocessor preprocessor) {
-		mPreprocessors.put(var, preprocessor);
 	}
 
 	public <T> T load(AssetFileDescriptor afd, Class<T> clazz) throws Exception {
@@ -144,8 +197,6 @@ public class IO {
 			String defaultValue = defaultValues[c];
 			Class<?> myType = paramTypes[c];
 
-			
-			
 			if (!jObj.has(param)) {
 				/*
 				 * JSON element not found, that means we have to use default
@@ -154,32 +205,34 @@ public class IO {
 				jObj.put(param, defaultValue == null ? JSONObject.NULL
 						: defaultValue);
 			}
-			
-			//Log.debug("Deserializing: " + myType + " " + jObj.get(param));
+
+			// Log.debug("Deserializing: " + myType + " " + jObj.get(param));
 
 			parsed[c] = getValue(jObj, param, myType);
 		}
 
 		return parsed;
 	}
-	
+
 	private Object getValue(JSONArray array, Class<?> clazz) throws Exception {
-		
+
 		Object parsedArray = Array.newInstance(clazz, array.length());
 
-		for(int c=0;c<array.length(); ++c) {
-			if ((clazz.equals(String.class) || clazz.isPrimitive()) && !clazz.equals(float.class)) {
+		for (int c = 0; c < array.length(); ++c) {
+			if ((clazz.equals(String.class) || clazz.isPrimitive())
+					&& !clazz.equals(float.class)) {
 				Array.set(parsedArray, c, array.get(c));
-			} else if(clazz.equals(float.class)) {
-				Array.set(parsedArray, c, (float)array.getDouble(c));
-			} else if(clazz.isArray()) {
+			} else if (clazz.equals(float.class)) {
+				Array.set(parsedArray, c, (float) array.getDouble(c));
+			} else if (clazz.isArray()) {
 				// nested array
-				Array.set(parsedArray, c, getValue(array.getJSONArray(c), float.class)); // TODO
+				Array.set(parsedArray, c,
+						getValue(array.getJSONArray(c), float.class)); // TODO
 			} else {
 				Array.set(parsedArray, c, load(array.getJSONObject(c), clazz));
-			} 
+			}
 		}
-		
+
 		return parsedArray;
 	}
 
@@ -210,38 +263,38 @@ public class IO {
 			if (isNullOrEmpty(jObj, param))
 				return null;
 
-//			JSONArray jArray = jObj.getJSONArray(param);
-//			Object parsedArray = Array.newInstance(clazz.getComponentType(),
-//					jArray.length());
-//
-//			Class<?> componentType = clazz.getComponentType();
-//
-//			for (int i = 0; i < jArray.length(); ++i) {
-//
-//				if (componentType.isPrimitive()) {
-//					Array.set(parsedArray, i, jArray.get(i));
-//				} else if (componentType.isArray()) {
-//					JSONArray nestedArray = jArray.getJSONArray(i);
-//
-//					
-//					
-//					Array.set(
-//							parsedArray,
-//							i,
-//							componentType.isPrimitive() ? jArray.get(i) : load(
-//									jArray.getJSONObject(i),
-//									clazz.getComponentType()));
-//				} else {
-//					Array.set(
-//							parsedArray,
-//							i,
-//							load(jArray.getJSONObject(i),
-//									clazz.getComponentType()));
-//				}
-				return getValue(jObj.getJSONArray(param), clazz.getComponentType());
-			//}
+			// JSONArray jArray = jObj.getJSONArray(param);
+			// Object parsedArray = Array.newInstance(clazz.getComponentType(),
+			// jArray.length());
+			//
+			// Class<?> componentType = clazz.getComponentType();
+			//
+			// for (int i = 0; i < jArray.length(); ++i) {
+			//
+			// if (componentType.isPrimitive()) {
+			// Array.set(parsedArray, i, jArray.get(i));
+			// } else if (componentType.isArray()) {
+			// JSONArray nestedArray = jArray.getJSONArray(i);
+			//
+			//
+			//
+			// Array.set(
+			// parsedArray,
+			// i,
+			// componentType.isPrimitive() ? jArray.get(i) : load(
+			// jArray.getJSONObject(i),
+			// clazz.getComponentType()));
+			// } else {
+			// Array.set(
+			// parsedArray,
+			// i,
+			// load(jArray.getJSONObject(i),
+			// clazz.getComponentType()));
+			// }
+			return getValue(jObj.getJSONArray(param), clazz.getComponentType());
+			// }
 
-			//return parsedArray;
+			// return parsedArray;
 		} else {
 			return isNullOrEmpty(jObj, param) ? null : load(
 					jObj.getJSONObject(param), clazz);
