@@ -1,0 +1,161 @@
+{
+  "x": 200,
+  "y": 400,
+  "body": {
+    "class": "eu.sathra.physics.dyn4j.Dyn4jBody",
+    "mass": 10,
+    "shape": {
+      "class": "eu.sathra.physics.shapes.Rectangle",
+      "width": 70,
+      "height": 95
+    }
+  },
+  "children": [
+    {
+      "class": "eu.sathra.scene.TextNode",
+      "y": 100,
+      "font": {
+        "font_path": "fonts\/visitor1.ttf",
+        "size": 30
+      },
+      "text": "H^1e^2l^3l^4o ^5w^6o^7r^8l^0d!",
+      "parse_colors": true
+    },
+    {
+      "class": "eu.sathra.scene.CameraNode",
+      "x": 0,
+      "y": 200,
+      "w": 1920,
+      "h": 1104
+    },
+    {
+      "class": "eu.sathra.scene.LightNode",
+      "x": 0,
+      "y": 0.5,
+      "sprite": {
+        "texture": {
+          "filename": "textures\/lights\/blue_gloom.png"
+        }
+      }
+    },
+    {
+      "class": "eu.sathra.scene.SceneNode",
+      "id": "anim_parent",
+      "children": [
+        {
+          "class": "eu.sathra.scene.AnimatedSpriteNode",
+          "id": "stand",
+          "is_visible": "false",
+          "is_playing": "true",
+          "duration": 600,
+          "frames": [
+            {
+              "texture": {
+                "filename": "textures\/players\/player_green.png"
+              },
+              "pivot_x": "0.5",
+              "pivot_y": "0",
+              "clip": {
+                "x": 70,
+                "y": 92,
+                "w": 66,
+                "h": 92
+              }
+            }
+          ]
+        },
+        {
+          "class": "eu.sathra.scene.AnimatedSpriteNode",
+          "id": "run",
+          "is_visible": "true",
+          "is_playing": "true",
+          "duration": 300,
+          "frames": [
+            {
+              "texture": {
+                "filename": "textures\/players\/player_green.png"
+              },
+              "pivot_x": "0.5",
+              "pivot_y": "0",
+              "clip": {
+                "x": 0,
+                "y": 0,
+                "w": 70,
+                "h": 96
+              }
+            },
+            {
+              "texture": {
+                "filename": "textures\/players\/player_green.png"
+              },
+              "pivot_x": "0.5",
+              "pivot_y": "0",
+              "clip": {
+                "x": 70,
+                "y": 193,
+                "w": 67,
+                "h": 93
+              }
+            }
+          ]
+        },
+        {
+          "class": "eu.sathra.scene.AnimatedSpriteNode",
+          "id": "fall",
+          "is_visible": "true",
+          "is_playing": "true",
+          "duration": 300,
+          "frames": [
+            {
+              "texture": {
+                "filename": "textures\/players\/player_green.png"
+              },
+              "pivot_x": "0.5",
+              "pivot_y": "0",
+              "clip": {
+                "x": 0,
+                "y": 286,
+                "w": 69,
+                "h": 93
+              }
+            }
+          ]
+        },
+        {
+          "class": "eu.sathra.scene.AnimatedSpriteNode",
+          "id": "jump",
+          "is_visible": "false",
+          "is_playing": "true",
+          "duration": 600,
+          "frames": [
+            {
+              "texture": {
+                "filename": "textures\/players\/player_green.png"
+              },
+              "pivot_x": "0.5",
+              "pivot_y": "0",
+              "clip": {
+                "x": 69,
+                "y": 379,
+                "w": 65,
+                "h": 92
+              }
+            }
+          ],
+          "children": [
+            {
+              "class": "eu.sathra.scene.SpriteNode",
+              "x": 0,
+              "y": -20,
+              "sprite": {
+                "texture": {
+                  "filename": "textures\/blue_jet.png"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

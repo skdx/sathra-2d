@@ -1,0 +1,101 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sathra="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:ignore="ContentDescription" 
+    android:background="@android:color/black">
+
+    <eu.sathra.view.SurfaceView
+        android:id="@id/surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:layout_above="@+id/admob"/>
+
+    <ImageView
+        android:id="@+id/hud_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="70dp"
+        android:layout_toLeftOf="@+id/hud_a"
+        android:clickable="true"
+        android:src="@drawable/selector_hud_b" />
+
+    <ImageView
+        android:id="@+id/hud_a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/hud_b"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:clickable="true"
+        android:src="@drawable/selector_hud_a" />
+
+    <ImageView
+        android:id="@+id/hud_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/hud_left"
+        android:layout_marginLeft="70dp"
+        android:layout_toRightOf="@+id/hud_left"
+        android:clickable="true"
+        android:src="@drawable/selector_hud_right" />
+
+    <ImageView
+        android:id="@+id/hud_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/hud_a"
+        android:layout_marginLeft="30dp"
+        android:clickable="true"
+        android:src="@drawable/selector_hud_left" />
+
+    <eu.sathra.view.TextView
+        android:id="@+id/hud_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:text="@string/pause_text"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textColor="@android:color/white"
+        android:visibility="invisible"
+        sathra:fontFamily="visitor1.ttf" />
+
+    <eu.sathra.view.TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/info"
+        android:textColor="@android:color/white"
+        sathra:fontFamily="visitor1.ttf" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" >
+
+        <ImageView
+            android:id="@+id/hud_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:src="@drawable/selector_hud_start" />
+
+        <ImageView
+            android:id="@+id/hud_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:src="@drawable/selector_hud_select" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Sathra 2D Demo</string>
+    <string name="pause_text">PAUSED\n\nSATHRA 2D Android Game Engine\nwww.sathra.eu\n\nGraphics:kenney.nl\nMusic:soundcloud.com/watchfulmusic</string>
+	<string name="info">SATHRA 2D Android Game Engine - ALPHA DEMO</string>
+</resources>
