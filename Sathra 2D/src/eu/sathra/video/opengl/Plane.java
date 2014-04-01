@@ -47,22 +47,20 @@ public class Plane implements Renderable {
 		gl.glPushMatrix();
 
 		/* TRANSLATION */
-		gl.glTranslatef(mOffsetX * getWidth(), mOffsetY * getHeight(), 0); // Apply pivot
-		gl.glTranslatef(mX, mY, 0);
+		gl.glTranslatef(mX + mOffsetX * getWidth(),
+				mY + mOffsetY * getHeight(), 0);
 
 		/* ROTATION */
 		// gl.glRotatef(mRotation, 0, 0, 1);
 
 		/* DRAWING */
-		float r = (float) Color.red(mColor) / 255;
-		float g = (float) Color.green(mColor) / 255;
-		float b = (float) Color.blue(mColor) / 255;
-		float a = (float) Color.alpha(mColor) / 255;
+		 float r = (float) Color.red(mColor) / 255;
+		 float g = (float) Color.green(mColor) / 255;
+		 float b = (float) Color.blue(mColor) / 255;
+		 float a = (float) Color.alpha(mColor) / 255;
+		
+		 gl.glColor4f(r, g, b, a);
 
-		gl.glColor4f(r, g, b, a);
-		gl.glFrontFace(GL10.GL_CCW);
-		// gl.glEnable(GL10.GL_CULL_FACE);
-		// gl.glCullFace(GL10.GL_BACK);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 
@@ -70,7 +68,6 @@ public class Plane implements Renderable {
 				GL10.GL_UNSIGNED_SHORT, indexBuffer);
 
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glDisable(GL10.GL_CULL_FACE);
 		gl.glPopMatrix();
 	}
 

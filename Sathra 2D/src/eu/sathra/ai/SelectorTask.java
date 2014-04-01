@@ -2,9 +2,11 @@ package eu.sathra.ai;
 
 /**
  * This task will iterate through each of it's children until one of them
- * returns TRUE or all of children will return FALSE. If one of the children
- * returns TRUE or RUNNING, Selector will also return this value. If all of
- * children return FALSE, selector also returns false.
+ * returns <code>TaskResult.TRUE</code> or all of children will return
+ * <code>TaskResult.FALSE</code>. If one of the children returns
+ * <code>TaskResult.TRUE</code> or <code>TaskResult.RUNNING</code>, Selector
+ * will also return this value. If all of children return TaskResult.FALSE,
+ * selector also returns false.
  * 
  * @author Milosz Moczkowski
  * 

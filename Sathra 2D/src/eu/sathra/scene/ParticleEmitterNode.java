@@ -178,7 +178,7 @@ public class ParticleEmitterNode extends SceneNode implements AnimationListener 
 		mParams.particle = particle;
 	}
 
-	protected void draw(GL10 gl, long time, long delta) {
+	protected synchronized void draw(GL10 gl, long time, long delta) {
 		if (time > mNextEmit && isEmitting()) {
 			// time to emit
 			final long lifespan = (long) (mParams.minLifetime + (mParams.maxLifetime - mParams.minLifetime)

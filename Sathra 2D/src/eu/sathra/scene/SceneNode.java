@@ -2,6 +2,8 @@ package eu.sathra.scene;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -25,7 +27,7 @@ import eu.sathra.physics.Body;
  * 
  */
 // TODO: findChildrenById
-public class SceneNode implements Cloneable {
+public class SceneNode {
 
 	private String mId;
 	private boolean mIsVisible = true;
@@ -34,6 +36,7 @@ public class SceneNode implements Cloneable {
 	private Task mAITask;
 	private AIContext mAIContext;
 	private Set<SceneNode> mChildren = new LinkedHashSet<SceneNode>();
+	private SceneNode[] mChildrenCopy = new SceneNode[0];
 	private Animation mCurrentAnimation;
 	private Transformation mTransformation = new Transformation();
 	private float mX;
@@ -61,6 +64,8 @@ public class SceneNode implements Cloneable {
 			Deserialize.NULL })
 	public SceneNode(String id, float x, float y, boolean isVisible,
 			Animation animation, SceneNode[] children, Body body, Task ai) {
+
+		ReentrantReadWriteLock myLock = new ReentrantReadWriteLock();
 
 		setId(id);
 		setBody(body);
@@ -113,6 +118,7 @@ public class SceneNode implements Cloneable {
 
 	/**
 	 * Add node to this child.
+	 * 
 	 * @param child
 	 */
 	public void addChild(SceneNode child) {
@@ -122,21 +128,28 @@ public class SceneNode implements Cloneable {
 
 		mChildren.add(child);
 		child.mParent = this;
+		
+		updateChildrenCopy();
 	}
 
 	public void addChildren(SceneNode[] children) {
 		for (SceneNode child : children) {
 			addChild(child);
 		}
+		
+		updateChildrenCopy();
 	}
 
 	public void removeChild(SceneNode child) {
 		mChildren.remove(child);
 		child.mParent = null;
+		
+		updateChildrenCopy();
 	}
 
 	/**
 	 * Return a copy of an array containing this node's children.
+	 * 
 	 * @return
 	 */
 	public SceneNode[] getChildren() {
@@ -145,6 +158,7 @@ public class SceneNode implements Cloneable {
 
 	/**
 	 * Searches recursively for a node with a given id.
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -191,8 +205,9 @@ public class SceneNode implements Cloneable {
 			}
 
 			gl.glPushMatrix();
-			gl.glTranslatef(getX(), getY(), 0);
-			// gl.glPushMatrix();
+			gl.glTranslatef(getX() / getAbsoluteScaleX(), getY()
+					/ getAbsoluteScaleY(), 0);
+
 			gl.glScalef(getScaleX(), getScaleY(), 0);
 
 			// Draw yourself
@@ -200,9 +215,10 @@ public class SceneNode implements Cloneable {
 			// gl.glPopMatrix();
 
 			// Draw children
-			SceneNode[] childrenCopy = mChildren
-					.toArray(new SceneNode[mChildren.size()]);
-			gl.glScalef(1, 1, 1);
+			// SceneNode[] childrenCopy = mChildren
+			// .toArray(new SceneNode[mChildren.size()]);
+			SceneNode[] childrenCopy = mChildrenCopy;
+
 			for (SceneNode child : childrenCopy) {
 				child.onDraw(gl, time, delta);
 			}
@@ -328,5 +344,9 @@ public class SceneNode implements Cloneable {
 
 	protected void draw(GL10 gl, long time, long delta) {
 		// noop
+	}
+
+	private void updateChildrenCopy() {
+		mChildrenCopy = mChildren.toArray(new SceneNode[mChildren.size()]);
 	}
 }

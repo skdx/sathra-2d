@@ -35,7 +35,8 @@ public class MainActivity extends SathraActivity implements OnClickListener {
 		params.ambientColor = 0xAA000000;
 		params.bgColor = 0x00000000;
 		params.showFPS = true;
-
+		
+		
 		return params;
 	}
 

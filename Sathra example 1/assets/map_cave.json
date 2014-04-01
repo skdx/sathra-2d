@@ -435,7 +435,7 @@
       "sprite": {
         "pivot_x": 0,
         "pivot_y": 0,
-        "width": 2048,
+        "width": 2100,
         "fit": "REPEAT",
         "texture": {
           "filename": "textures\/lava_light.png"

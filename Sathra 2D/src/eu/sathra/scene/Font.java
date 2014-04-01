@@ -65,6 +65,7 @@ public class Font {
 				Bitmap.Config.ARGB_8888);
 
 		Canvas canvas = new Canvas(bitmap);
+		canvas.drawColor(Color.TRANSPARENT);
 		canvas.drawText(table, 0, table.length, 0, fontHeight / 2, paint);
 
 		Texture fontTexture = new Texture(bitmap);
@@ -76,7 +77,6 @@ public class Font {
 		for (int c = 0; c < table.length; ++c) {
 
 			Rect clip = new Rect(x, 0, (int) (x + widths[c]), fontHeight);
-			// Rect clip = new Rect(0, 0, 10, 10);
 
 			mSprites.put(table[c], new Sprite(fontTexture, clip));
 

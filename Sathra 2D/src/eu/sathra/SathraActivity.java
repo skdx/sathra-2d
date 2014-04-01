@@ -67,7 +67,8 @@ public abstract class SathraActivity extends Activity implements
 
 	private GLSurfaceView mSurfaceView;
 	private Parameters mParams;
-	private List<SceneNode> mChildren = new ArrayList<SceneNode>();
+	//private List<SceneNode> mChildren = new ArrayList<SceneNode>();
+	private SceneNode mRootNode = new SceneNode();
 	private long mLastDrawTimestamp;
 	private long mTime;
 	private long mVirtualTime;
@@ -174,6 +175,7 @@ public abstract class SathraActivity extends Activity implements
 			gl.glEnable(GL10.GL_DITHER);
 			gl.glEnable(GL10.GL_MULTISAMPLE);
 			gl.glEnable(GL10.GL_BLEND);
+			gl.glDisable(GL10.GL_CULL_FACE);
 
 			mLastDrawTimestamp = System.currentTimeMillis();
 		}
@@ -189,6 +191,8 @@ public abstract class SathraActivity extends Activity implements
 	@SuppressLint("WrongCall")
 	@Override
 	public void onDrawFrame(GL10 gl) {
+
+		// Update time variables
 		mTimeDelta = System.currentTimeMillis() - mLastDrawTimestamp;
 		mLastDrawTimestamp = System.currentTimeMillis();
 		mTime += mTimeDelta;
@@ -200,7 +204,6 @@ public abstract class SathraActivity extends Activity implements
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
 		// Clear BG
-
 		float r = (float) Color.red(mParams.bgColor) / 255;
 		float g = (float) Color.green(mParams.bgColor) / 255;
 		float b = (float) Color.blue(mParams.bgColor) / 255;
@@ -213,22 +216,22 @@ public abstract class SathraActivity extends Activity implements
 
 		gl.glMatrixMode(GL10.GL_TEXTURE);
 		gl.glLoadIdentity();
-		gl.glScalef(1, 1, 1);
 
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 
-		gl.glEnable(GL10.GL_BLEND);
+		//gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
-		for (SceneNode child : mChildren)
-			child.onDraw(gl, mVirtualTime, mVirtualTimeDelta);
+//		for (SceneNode child : mChildren)
+//			child.onDraw(gl, mVirtualTime, mVirtualTimeDelta);
+		mRootNode.onDraw(gl, mVirtualTime, mVirtualTimeDelta);
 
 		// Draw lights and shadows
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 		gl.glMatrixMode(GL10.GL_TEXTURE);
 		gl.glLoadIdentity();
-		gl.glScalef(1, -1, 1);
+		gl.glScalef(1, -1, 1); // Frame Buffers are upside down
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 
 		CameraNode activeCam = CameraNode.getActiveCamera();
@@ -237,7 +240,7 @@ public abstract class SathraActivity extends Activity implements
 			shad.setPosition(activeCam.getAbsoluteX(), activeCam.getAbsoluteY());
 		}
 
-		gl.glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_ONE_MINUS_SRC_ALPHA); // ALMOST!!!
+		gl.glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
 		shad.draw(gl);
 
@@ -256,13 +259,15 @@ public abstract class SathraActivity extends Activity implements
 
 		// TODO
 		Dyn4jPhysics.getInstance().getWorld()
-				.updatev(mVirtualTimeDelta * MILISECONDS_TO_SECONDS);
+			.updatev(mVirtualTimeDelta * MILISECONDS_TO_SECONDS);
 
-		if (mIsRunning)
+		//if (mIsRunning)
 			onUpdate(mVirtualTime, mVirtualTimeDelta);
 
 		// Update fps counter
 		mFPS = 1000f / mTimeDelta;
+	
+		//System.gc();
 	}
 
 	@Override
@@ -314,15 +319,15 @@ public abstract class SathraActivity extends Activity implements
 	 *            SceneNode to be added
 	 */
 	public void addNode(SceneNode child) {
-		mChildren.add(child);
+		mRootNode.addChild(child);
 	}
 
 	public void addNodes(SceneNode[] children) {
-		mChildren.addAll(Arrays.asList(children));
+		mRootNode.addChildren(children);
 	}
 
 	public void removeNode(SceneNode child) {
-		mChildren.remove(child);
+		mRootNode.removeChild(child);
 	}
 
 	public float getFPS() {
