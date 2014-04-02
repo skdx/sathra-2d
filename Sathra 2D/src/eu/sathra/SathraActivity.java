@@ -184,9 +184,6 @@ public abstract class SathraActivity extends Activity implements
 	public static int tex[] = new int[1];
 	int shadowtex;
 	Sprite shad;
-
-	Sprite mySprite;
-	Texture a = new Texture();
 	
 	@SuppressLint("WrongCall")
 	@Override
