@@ -8,7 +8,6 @@ import java.util.Map;
 
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
-import eu.sathra.scene.SceneNode;
 
 /**
  * Base class for AI task. A task is a leaf in behaviour tree. Each task can

@@ -2,8 +2,6 @@ package eu.sathra.scene;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -38,40 +36,28 @@ public class SceneNode {
 	private Set<SceneNode> mChildren = new LinkedHashSet<SceneNode>();
 	private SceneNode[] mChildrenCopy = new SceneNode[0];
 	private Animation mCurrentAnimation;
-	private Transformation mTransformation = new Transformation();
-	private float mX;
-	private float mY;
-	private float mAbsoluteX;
-	private float mAbsoluteY;
-	private float mScaleX;
-	private float mScaleY;
-	private float mAbsoluteScaleX;
-	private float mAbsoluteScaleY;
+	private Transform mTransform = new Transform();
+	private Transform mAbsoluteTransform = new Transform();
 	private Object mUserData = null;
 
 	public SceneNode() {
-		this(null, 0, 0, true, null, null, null, null);
+		this(null, new Transform(), true, null, null, null, null);
 	}
 
-	public SceneNode(float x, float y) {
-		this(null, x, y, true, null, null, null, null);
+	public SceneNode(Transform transform) {
+		this(null, transform, true, null, null, null, null);
 	}
 
-	@Deserialize({ "id", "x", "y", "is_visible", "animation", "children",
+	@Deserialize({ "id", "transform", "is_visible", "animation", "children",
 			"body", "ai" })
-	@Defaults({ Deserialize.NULL, "0", "0", "true", Deserialize.NULL,
-			Deserialize.NULL, Deserialize.NULL, Deserialize.NULL,
-			Deserialize.NULL })
-	public SceneNode(String id, float x, float y, boolean isVisible,
+	@Defaults({ Deserialize.NULL, Deserialize.NULL, "true", Deserialize.NULL,
+			Deserialize.NULL, Deserialize.NULL, Deserialize.NULL })
+	public SceneNode(String id, Transform t, boolean isVisible,
 			Animation animation, SceneNode[] children, Body body, Task ai) {
-
-		ReentrantReadWriteLock myLock = new ReentrantReadWriteLock();
 
 		setId(id);
 		setBody(body);
-		setPosition(x, y);
 		setVisible(isVisible);
-		setScale(1, 1);
 		setAIContext(new AIContext(this));
 		setAI(ai);
 
@@ -80,6 +66,9 @@ public class SceneNode {
 
 		if (children != null)
 			addChildren(children);
+		
+		if(t != null)
+			setTransform(t);
 	}
 
 	/**
@@ -183,40 +172,34 @@ public class SceneNode {
 	public void onDraw(GL10 gl, long time, long delta) {
 		if (isVisible()) {
 
-			// Update absolute position and scale
-			mAbsoluteX = mParent == null ? 0 : mParent.getAbsoluteX();
-			mAbsoluteY = mParent == null ? 0 : mParent.getAbsoluteY();
-			mAbsoluteX += getX();
-			mAbsoluteY += getY();
-
-			mAbsoluteScaleX = mParent == null ? 1 : mParent.getAbsoluteScaleX();
-			mAbsoluteScaleY = mParent == null ? 1 : mParent.getAbsoluteScaleY();
-			mAbsoluteScaleX *= getScaleX();
-			mAbsoluteScaleY *= getScaleY();
+			// Update absolute transform
+			if(getParent() != null) 
+				mAbsoluteTransform.set(getParent().getAbsoluteTransform());
+			else
+				mAbsoluteTransform.clear();
+			
+			mAbsoluteTransform.add(getTransform());
 
 			// Apply animation
-			if (mCurrentAnimation != null) {
-
-				boolean animated = mCurrentAnimation.getTransformation(
-						System.currentTimeMillis(), mTransformation);
-
-				if (animated)
-					setMatrix(mTransformation.getMatrix());
-			}
+//			if (mCurrentAnimation != null) {
+//
+//				boolean animated = mCurrentAnimation.getTransformation(
+//						System.currentTimeMillis(), w);
+//
+//				if (animated)
+//					setMatrix(mTransformation.getMatrix());
+//			}
 
 			gl.glPushMatrix();
+			//gl.glTranslatef(getX(), getY(), 0);
+			gl.glScalef(getScaleX(), getScaleY(), 0);
 			gl.glTranslatef(getX() / getAbsoluteScaleX(), getY()
 					/ getAbsoluteScaleY(), 0);
 
-			gl.glScalef(getScaleX(), getScaleY(), 0);
-
 			// Draw yourself
 			draw(gl, time, delta);
-			// gl.glPopMatrix();
 
 			// Draw children
-			// SceneNode[] childrenCopy = mChildren
-			// .toArray(new SceneNode[mChildren.size()]);
 			SceneNode[] childrenCopy = mChildrenCopy;
 
 			for (SceneNode child : childrenCopy) {
@@ -239,42 +222,57 @@ public class SceneNode {
 		setPosition(array[2], array[5]);
 		setScale(array[0], array[4]);
 	}
+	
+	public void setTransform(Transform t) {
+		mTransform = t;
+		
+		if(mBody != null)
+			mBody.setTransform(t);
+	}
+	
+	public Transform getTransform() {
+		return mBody == null? mTransform : mBody.getTransform();
+	}
+	
+	public Transform getAbsoluteTransform() {
+		return mAbsoluteTransform;
+	}
 
 	public void setPosition(float x, float y) {
-		mX = x;
-		mY = y;
+		mTransform.setX(x);
+		mTransform.setY(y);
 
 		if (mBody != null)
 			mBody.setPosition(x, y);
 	}
 
 	public float getX() {
-		return mBody == null ? mX : mBody.getX();
+		return getTransform().getX();
 	}
 
 	public float getY() {
-		return mBody == null ? mY : mBody.getY();
+		return getTransform().getY();
 	}
 
 	public void setScale(float x, float y) {
-		mScaleX = x;
-		mScaleY = y;
+		mTransform.setScaleX(x);
+		mTransform.setScaleY(y);
 	}
 
 	public float getScaleX() {
-		return mScaleX;
+		return mTransform.getScaleX();
 	}
 
 	public float getScaleY() {
-		return mScaleY;
+		return mTransform.getScaleY();
 	}
-
+	
 	public float getAbsoluteScaleX() {
-		return mAbsoluteScaleX;
+		return mAbsoluteTransform.getScaleX();
 	}
 
 	public float getAbsoluteScaleY() {
-		return mAbsoluteScaleY;
+		return mAbsoluteTransform.getScaleY();
 	}
 
 	public void setVisible(boolean isVisible) {
@@ -303,13 +301,13 @@ public class SceneNode {
 	}
 
 	public float getAbsoluteX() {
-		return mAbsoluteX;
+		return mAbsoluteTransform.getX();
 	}
 
 	public float getAbsoluteY() {
-		return mAbsoluteY;
+		return mAbsoluteTransform.getY();
 	}
-
+	
 	public void setAI(Task ai) {
 		mAITask = ai;
 		// mAIContext = new AIContext(this); //TODO: reconsider

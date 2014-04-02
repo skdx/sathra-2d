@@ -3,9 +3,6 @@ package eu.sathra;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -26,13 +23,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.widget.TextView;
 import eu.sathra.Parameters.Orientation;
+import eu.sathra.ai.Task;
 import eu.sathra.io.IO;
 import eu.sathra.io.adapters.TypeAdapter;
+import eu.sathra.physics.Body;
 import eu.sathra.physics.dyn4j.Dyn4jPhysics;
 import eu.sathra.scene.CameraNode;
 import eu.sathra.scene.SceneNode;
+import eu.sathra.scene.Transform;
 import eu.sathra.util.Log;
 import eu.sathra.util.Util;
 import eu.sathra.video.opengl.Sprite;
@@ -67,7 +68,6 @@ public abstract class SathraActivity extends Activity implements
 
 	private GLSurfaceView mSurfaceView;
 	private Parameters mParams;
-	//private List<SceneNode> mChildren = new ArrayList<SceneNode>();
 	private SceneNode mRootNode = new SceneNode();
 	private long mLastDrawTimestamp;
 	private long mTime;
@@ -81,7 +81,6 @@ public abstract class SathraActivity extends Activity implements
 	private boolean mWasInitiated = false;
 	private FPSCounterUpdater mFPSCounterUpdater = new FPSCounterUpdater();
 
-	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -132,6 +131,8 @@ public abstract class SathraActivity extends Activity implements
 
 		setRequestedOrientation(mParams.orientation == Orientation.VERTICAL ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 				: ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//		new CameraNode(this, null, null, true, null, null, null, null);
+//		mRootNode.addChild(CameraNode.getActiveCamera());
 	}
 
 	@Override
@@ -188,10 +189,13 @@ public abstract class SathraActivity extends Activity implements
 	int shadowtex;
 	Sprite shad;
 
+	Sprite mySprite;
+	Texture a = new Texture();
+	
 	@SuppressLint("WrongCall")
 	@Override
 	public void onDrawFrame(GL10 gl) {
-
+		
 		// Update time variables
 		mTimeDelta = System.currentTimeMillis() - mLastDrawTimestamp;
 		mLastDrawTimestamp = System.currentTimeMillis();
@@ -222,11 +226,9 @@ public abstract class SathraActivity extends Activity implements
 
 		//gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
-//		for (SceneNode child : mChildren)
-//			child.onDraw(gl, mVirtualTime, mVirtualTimeDelta);
+		
 		mRootNode.onDraw(gl, mVirtualTime, mVirtualTimeDelta);
-
+		
 		// Draw lights and shadows
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 		gl.glMatrixMode(GL10.GL_TEXTURE);
@@ -299,14 +301,7 @@ public abstract class SathraActivity extends Activity implements
 			shad = new Sprite(
 					new Texture(tex[0], mParams.width, mParams.height));
 			shad.setPivot(0.5f, 0.5f);
-			
-//			this.runOnUiThread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					onEngineInitiated();
-//				}
-//			});
+
 			onEngineInitiated();
 			mWasInitiated = true;
 		}

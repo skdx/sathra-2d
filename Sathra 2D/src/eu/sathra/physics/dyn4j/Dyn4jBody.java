@@ -21,7 +21,7 @@ import org.dyn4j.geometry.Vector2;
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
 import eu.sathra.physics.shapes.Shape;
-import eu.sathra.util.Log;
+import eu.sathra.scene.Transform;
 
 public class Dyn4jBody extends CollisionAdapter implements
 		eu.sathra.physics.Body, StepListener {
@@ -218,7 +218,22 @@ public class Dyn4jBody extends CollisionAdapter implements
 
 	@Override
 	public void updatePerformed(Step step, World world) {
-		
+
+	}
+
+	@Override
+	public void setTransform(Transform t) {
+		mBody.getTransform().setTranslationX(t.getX()/PHYSICS_TO_PIXEL);
+		mBody.getTransform().setTranslationY(t.getY()/PHYSICS_TO_PIXEL);
+		mBody.getTransform().setRotation(t.getRotation());
+	}
+
+	@Override
+	public Transform getTransform() {
+		return new Transform((float) mBody.getTransform().getTranslationX()
+				* PHYSICS_TO_PIXEL, (float) mBody.getTransform()
+				.getTranslationY() * PHYSICS_TO_PIXEL, (float) mBody
+				.getTransform().getRotation());
 	}
 
 }

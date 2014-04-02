@@ -24,6 +24,7 @@ import eu.sathra.io.adapters.TypeAdapter;
 import eu.sathra.io.adapters.WorldAdapter;
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
+import eu.sathra.util.Log;
 
 /**
  * IO is used for deserializing objects from JSON. IO uses annotated constructors and 
@@ -206,7 +207,7 @@ public class IO {
 						: defaultValue);
 			}
 
-			// Log.debug("Deserializing: " + myType + " " + jObj.get(param));
+			//Log.debug("Deserializing: " + myType + " " + jObj.get(param));
 
 			parsed[c] = getValue(jObj, param, myType);
 		}

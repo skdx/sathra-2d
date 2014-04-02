@@ -1,13 +1,8 @@
 {
-  "world": {
-    "gravity_x": 0,
-    "gravity_y": 10
-  },
   "children": [
     {
       "class": "eu.sathra.scene.SpriteNode",
-      "x": 0,
-      "y": 0,
+      "transform": null,
       "sprite": {
         "pivot_x": 0,
         "pivot_y": 0,
@@ -21,8 +16,7 @@
     },
     {
       "class": "eu.sathra.scene.SpriteNode",
-      "x": 0,
-      "y": 0,
+      "transform": null,
       "sprite": {
         "pivot_x": 0,
         "pivot_y": 0,
@@ -368,10 +362,24 @@
         }
       }
     },
+
+    
+    {
+      "class": "eu.sathra.scene.SpriteNode",
+      "transform": {"x":200, "y":200},
+      "sprite": {
+        "pivot_x": 0,
+        "pivot_y": 0,
+        "fit": "REPEAT",
+        "texture": {
+          "filename": "textures\/torch1.png"
+        }
+      }
+    },
+
     {
       "class": "eu.sathra.scene.ParticleEmitterNode",
-      "x": 0,
-      "y": 0,
+      "transform": null,
       "params": {
         "particle": {
           "pivot_x": 0,
@@ -396,8 +404,7 @@
     },
     {
       "class": "eu.sathra.scene.AnimatedSpriteNode",
-      "x": 0,
-      "y": 0,
+      "transform": null,
       "duration": "300",
       "is_visible": "true",
       "frames": [
@@ -423,8 +430,7 @@
     },
     {
       "class": "eu.sathra.scene.LightNode",
-      "x": 0,
-      "y": 0,
+      "transform": null,
       "animation": {
         "class": "eu.sathra.scene.animation.ScaleAnimation",
         "duration": 1000,
@@ -444,8 +450,10 @@
     },
     {
       "class": "eu.sathra.scene.AnimatedSpriteNode",
-      "x": 320,
-      "y": 850,
+      "transform": {
+	      "x": 320,
+	      "y": 850
+      },
       "duration": "300",
       "is_visible": "true",
       "frames": [
@@ -463,8 +471,7 @@
       "children": [
         {
           "class": "eu.sathra.scene.LightNode",
-          "x": 0,
-          "y": 0,
+          "transform": null,
           "sprite": {
             "texture": {
               "filename": "textures\/lights\/torch_light.png"
@@ -484,8 +491,9 @@
     },
     {
       "class": "eu.sathra.scene.AnimatedSpriteNode",
-      "x": 1645,
-      "y": 860,
+      "transform": {"x": 1645,
+      "y": 860},
+      
       "duration": "300",
       "is_visible": "true",
       "frames": [
@@ -503,8 +511,7 @@
       "children": [
         {
           "class": "eu.sathra.scene.LightNode",
-          "x": 0,
-          "y": 0,
+          "transform": null,
           "sprite": {
             "texture": {
               "filename": "textures\/lights\/torch_light.png"
@@ -524,8 +531,9 @@
     },
     {
       "class": "eu.sathra.scene.LightNode",
-      "x": 580,
-      "y": 525,
+      "transform": {
+      "x": 1150,
+      "y": 1050},
       "sprite": {
         "pivot_x": 0.5,
         "pivot_y": 1,

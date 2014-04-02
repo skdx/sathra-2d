@@ -35,11 +35,10 @@ public class MainActivity extends SathraActivity implements OnClickListener {
 		params.ambientColor = 0xAA000000;
 		params.bgColor = 0x00000000;
 		params.showFPS = true;
-		
-		
+
 		return params;
 	}
-
+	
 	@Override
 	protected void onEngineInitiated() {
 		try {
@@ -58,7 +57,7 @@ public class MainActivity extends SathraActivity implements OnClickListener {
 			mSelectButton.setOnClickListener(this);
 
 			mAnimParent = mPlayerNode.findChildById("anim_parent");
-
+		
 			// Setup AI
 			AIContext playerContext = mPlayerNode.getAIContext();
 			playerContext.setVariable(PlayerTask.VAR_JUMP_BUTTON, mAButton);
@@ -74,6 +73,7 @@ public class MainActivity extends SathraActivity implements OnClickListener {
 			rootTask.addChild(new IdleTask());
 			mPlayerNode.setAI(rootTask);
 
+			
 		} catch (Exception e) {
 			// For some reason scene couldn't be loaded
 			e.printStackTrace();

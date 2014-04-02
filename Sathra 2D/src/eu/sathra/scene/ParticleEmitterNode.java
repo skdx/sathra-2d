@@ -98,16 +98,16 @@ public class ParticleEmitterNode extends SceneNode implements AnimationListener 
 	private float mNextEmit;
 	private Random mRandom = new Random();
 
-	@Deserialize({ "id", "x", "y", "is_visible", "animation", "children",
+	@Deserialize({ "id", "transform", "is_visible", "animation", "children",
 			"body", "ai", "params" })
-	@Defaults({ Deserialize.NULL, "0", "0", "true", Deserialize.NULL,
+	@Defaults({ Deserialize.NULL, Deserialize.NULL, "true", Deserialize.NULL,
 			Deserialize.NULL, Deserialize.NULL, Deserialize.NULL,
 			Deserialize.NULL })
-	public ParticleEmitterNode(String id, float x, float y, boolean isVisible,
+	public ParticleEmitterNode(String id, Transform t, boolean isVisible,
 			Animation animation, SceneNode[] children, Body body, Task ai,
 			EmitParameters params) {
 
-		super(id, x, y, isVisible, animation, children, body, ai);
+		super(id, t, isVisible, animation, children, body, ai);
 
 		setEmitParameters(params);
 		emit(true);
@@ -207,7 +207,7 @@ public class ParticleEmitterNode extends SceneNode implements AnimationListener 
 			animation.setRepeatCount(1);
 
 			SpriteNode particleNode = new SpriteNode(null, mParams.particle,
-					spawnX, spawnY, true, animation, null, null, null);
+					new Transform(spawnX, spawnY), true, animation, null, null, null);
 
 			animation.setAnimationListener(new NodeDestroyer(particleNode));
 

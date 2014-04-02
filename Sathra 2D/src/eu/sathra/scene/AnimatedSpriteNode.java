@@ -23,15 +23,15 @@ public class AnimatedSpriteNode extends SceneNode {
 	private long mStopTime;
 	private List<Sprite> mFrames = new ArrayList<Sprite>();
 
-	@Deserialize({ "id", "x", "y", "is_visible", "frames", "duration",
+	@Deserialize({ "id", "transform", "is_visible", "frames", "duration",
 			"is_playing", "animation", "children", "body", "ai" })
-	@Defaults({ Deserialize.NULL, "0", "0", "true", Deserialize.NULL, "0",
+	@Defaults({ Deserialize.NULL, Deserialize.NULL, "true", Deserialize.NULL, "0",
 			"true", Deserialize.NULL, Deserialize.NULL, Deserialize.NULL,
 			Deserialize.NULL })
-	public AnimatedSpriteNode(String id, int x, int y, boolean isVisible,
+	public AnimatedSpriteNode(String id, Transform t, boolean isVisible,
 			Sprite[] frames, float duration, boolean isPlaying,
 			Animation animation, SceneNode[] children, Body body, Task ai) {
-		super(id, x, y, isVisible, animation, children, body, ai);
+		super(id, t, isVisible, animation, children, body, ai);
 		setFrames(frames);
 		setDuration(duration);
 		setIsPlaying(isPlaying);

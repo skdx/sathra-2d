@@ -67,21 +67,21 @@ public class TextNode extends SceneNode {
 	private Alignment mAlignment;
 	private float mTextWidth;
 
-	public TextNode(float x, float y, Font font, String text,
+	public TextNode(Transform t, Font font, String text,
 			boolean parseColors) {
-		this(null, x, y, font, text, Alignment.CENTER, parseColors, true, null,
+		this(null, t, font, text, Alignment.CENTER, parseColors, true, null,
 				null, null, null);
 	}
 
-	@Deserialize({ "id", "x", "y", "font", "text", "alignment", "parse_colors",
+	@Deserialize({ "id", "transform", "font", "text", "alignment", "parse_colors",
 			"is_visible", "animation", "children", "body", "ai" })
-	@Defaults({ Deserialize.NULL, "0", "0", Deserialize.NULL, "", "CENTER", "true",
+	@Defaults({ Deserialize.NULL, Deserialize.NULL, Deserialize.NULL, "", "CENTER", "true",
 			"true", Deserialize.NULL, Deserialize.NULL, Deserialize.NULL,
 			Deserialize.NULL, Deserialize.NULL })
-	public TextNode(String id, float x, float y, Font font, String text,
+	public TextNode(String id, Transform t, Font font, String text,
 			Alignment alignment, boolean parseColors, boolean isVisible,
 			Animation animation, SceneNode[] children, Body body, Task ai) {
-		super(id, x, y, isVisible, animation, children, body, ai);
+		super(id, t, isVisible, animation, children, body, ai);
 
 		setColorPrefix(DEFAULT_COLOR_PREFIX);
 		setFont(font);

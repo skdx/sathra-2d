@@ -13,15 +13,15 @@ public class SpriteNode extends SceneNode {
 
 	private Sprite mSprite;
 
-	@Deserialize({ "id", "sprite", "x", "y", "is_visible", "animation",
+	@Deserialize({ "id", "sprite", "transform", "is_visible", "animation",
 			"children", "body", "ai" })
-	@Defaults({ Deserialize.NULL, Deserialize.NULL, "0", "0", "true",
+	@Defaults({ Deserialize.NULL, Deserialize.NULL, Deserialize.NULL, "true",
 			Deserialize.NULL, Deserialize.NULL, Deserialize.NULL,
 			Deserialize.NULL })
-	public SpriteNode(String id, Sprite sprite, float x, float y,
+	public SpriteNode(String id, Sprite sprite, Transform t,
 			boolean isVisible, Animation animation, SceneNode[] children,
 			Body body, Task ai) {
-		super(id, x, y, isVisible, animation, children, body, ai);
+		super(id, t, isVisible, animation, children, body, ai);
 
 		mSprite = sprite;
 	}

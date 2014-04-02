@@ -7,9 +7,6 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import org.json.JSONObject;
-
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Matrix;
 

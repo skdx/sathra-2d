@@ -3,9 +3,12 @@ package eu.sathra.physics;
 import java.util.List;
 
 import eu.sathra.physics.shapes.Shape;
+import eu.sathra.scene.Transform;
 
 public interface Body {
 
+	void setTransform(Transform t);
+	Transform getTransform();
 	void setPosition(float x, float y);
 	float getX();
 	float getY();
