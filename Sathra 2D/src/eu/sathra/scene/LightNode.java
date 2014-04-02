@@ -15,17 +15,17 @@ public class LightNode extends SceneNode {
 	private Sprite mSprite;
 
 	public LightNode(Sprite sprite) {
-		this(null, sprite, 0, 0, true, null, null, null, null);
+		this(null, sprite, new Transform(), true, null, null, null, null);
 	}
 
-	@Deserialize({ "id", "sprite", "x", "y", "is_visible", "animation",
+	@Deserialize({ "id", "sprite", "transform", "is_visible", "animation",
 			"children", "body", "ai" })
-	@Defaults({ Deserialize.NULL, Deserialize.NULL, "0", "0", "true",
+	@Defaults({ Deserialize.NULL, Deserialize.NULL, Deserialize.NULL, "true",
 			Deserialize.NULL, Deserialize.NULL, Deserialize.NULL,
 			Deserialize.NULL })
-	public LightNode(String id, Sprite sprite, int x, int y, boolean isVisible,
+	public LightNode(String id, Sprite sprite, Transform t, boolean isVisible,
 			Animation animation, SceneNode[] children, Body body, Task ai) {
-		super(id, x, y, isVisible, animation, children, body, ai);
+		super(id, t, isVisible, animation, children, body, ai);
 		mSprite = sprite;
 	}
 
@@ -39,17 +39,17 @@ public class LightNode extends SceneNode {
 				SathraActivity.tex[0], 0);
 
 		// get and save current blend func
-		int blend[] = new int[2];
-		GLES20.glGetIntegerv(GLES20.GL_BLEND_SRC_ALPHA, blend, 0);
-		GLES20.glGetIntegerv(GLES20.GL_BLEND_DST_ALPHA, blend, 1);
+//		int blend[] = new int[2];
+//		GLES20.glGetIntegerv(GLES20.GL_BLEND_SRC_ALPHA, blend, 0);
+//		GLES20.glGetIntegerv(GLES20.GL_BLEND_DST_ALPHA, blend, 1);
 
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
-		gl.glTranslatef(getX(), getY(), 0);
+		//gl.glTranslatef(getX(), getY(), 0);
 		mSprite.draw(gl);
 
 		// Restore previous blend
-		gl.glBlendFunc(blend[0], blend[1]);
-
+		//gl.glBlendFunc(blend[0], blend[1]);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		// Switch back to screen buffer
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
