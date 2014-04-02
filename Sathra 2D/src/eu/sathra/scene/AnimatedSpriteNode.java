@@ -6,11 +6,11 @@ import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.view.animation.Animation;
 import eu.sathra.ai.Task;
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
 import eu.sathra.physics.Body;
+import eu.sathra.scene.animation.Animation;
 import eu.sathra.video.opengl.Sprite;
 
 public class AnimatedSpriteNode extends SceneNode {

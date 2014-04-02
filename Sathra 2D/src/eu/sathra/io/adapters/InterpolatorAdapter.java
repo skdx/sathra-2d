@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
+// TODO
 public class InterpolatorAdapter implements TypeAdapter<Interpolator> {
 
 	private static final String INTERPOLATOR_LINEAR = "linear";

@@ -2,13 +2,12 @@ package eu.sathra.scene;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.view.animation.Animation;
 import eu.sathra.SathraActivity;
 import eu.sathra.ai.Task;
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
 import eu.sathra.physics.Body;
-import eu.sathra.util.Log;
+import eu.sathra.scene.animation.Animation;
 
 // TODO: aspect ratio
 public class CameraNode extends SceneNode {

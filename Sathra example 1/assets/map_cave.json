@@ -362,21 +362,6 @@
         }
       }
     },
-
-    
-    {
-      "class": "eu.sathra.scene.SpriteNode",
-      "transform": {"x":200, "y":200},
-      "sprite": {
-        "pivot_x": 0,
-        "pivot_y": 0,
-        "fit": "REPEAT",
-        "texture": {
-          "filename": "textures\/torch1.png"
-        }
-      }
-    },
-
     {
       "class": "eu.sathra.scene.ParticleEmitterNode",
       "transform": null,
@@ -392,12 +377,8 @@
         "max_emision": 1,
         "min_life": 500,
         "max_life": 3000,
-        "min_size": 0.5,
-        "max_size": 0.6,
-        "velocity_x": 10,
-        "velocity_y": 100,
-        "rnd_velocity_x": 10,
-        "rnd_velocity_y": 80,
+        "direction": { "y":150, "scale_x":1, "scale_y":1 },
+        "variance": { "x":15, "y":50, "angle":200, "scale_x":0.1, "scale_y":0.1 },
         "width": 2000,
         "height": 0
       }
@@ -420,7 +401,7 @@
         {
           "pivot_x": 0,
           "pivot_y": 0,
-          "width": 2048,
+          "width": 2100,
           "fit": "REPEAT",
           "texture": {
             "filename": "textures\/lava2.png"
@@ -432,10 +413,9 @@
       "class": "eu.sathra.scene.LightNode",
       "transform": null,
       "animation": {
-        "class": "eu.sathra.scene.animation.ScaleAnimation",
         "duration": 1000,
-        "from_y": "1",
-        "to_y": "1.2",
+        "from": {"scale_y": "1"},
+        "to": {"scale_y": "1.2"},
         "count": -1
       },
       "sprite": {
@@ -478,12 +458,9 @@
             }
           },
           "animation": {
-            "class": "eu.sathra.scene.animation.ScaleAnimation",
+            "from":{"scale_y":1.2, "scale_x":1.2},
+            "to":{"scale_y":1.4, "scale_x":1.4},
             "duration": 400,
-            "from_y": 1.2,
-            "to_y": 1.4,
-            "from_x": 1.2,
-            "to_x": 1.4,
             "count": -1
           }
         }
@@ -518,12 +495,9 @@
             }
           },
           "animation": {
-            "class": "eu.sathra.scene.animation.ScaleAnimation",
+            "from":{"scale_y":1.2, "scale_x":1.2},
+            "to":{"scale_y":1.4, "scale_x":1.4},
             "duration": 400,
-            "from_y": 1.2,
-            "to_y": 1.4,
-            "from_x": 1.2,
-            "to_x": 1.4,
             "count": -1
           }
         }

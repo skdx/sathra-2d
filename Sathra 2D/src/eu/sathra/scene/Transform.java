@@ -3,6 +3,13 @@ package eu.sathra.scene;
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
 
+/**
+ * Class representing transformation info (position, scale and rotation). This
+ * class is muttable!
+ * 
+ * @author Milosz Moczkowski
+ * 
+ */
 public class Transform {
 
 	private float mX;
@@ -21,6 +28,10 @@ public class Transform {
 
 	public Transform(float x, float y, float angle) {
 		this(x, y, angle, 1, 1);
+	}
+	
+	public Transform(Transform other) {
+		set(other);
 	}
 
 	@Deserialize({ "x", "y", "angle", "scale_x", "scale_y" })
@@ -72,8 +83,8 @@ public class Transform {
 	}
 
 	public void setScale(float x, float y) {
-		mScaleX = x;
-		mScaleY = y;
+		mScaleX = Math.min(x, 0);
+		mScaleY = Math.min(y, 0);
 	}
 
 	public void setRotation(float rotation) {
@@ -84,9 +95,11 @@ public class Transform {
 		set(0, 0, 0, 1, 1);
 	}
 
-	public void set(Transform other) {
+	public Transform set(Transform other) {
 		set(other.getX(), other.getY(), other.getRotation(), other.getScaleX(),
 				other.getScaleY());
+		
+		return this;
 	}
 
 	public void set(float x, float y, float rotation, float scaleX, float scaleY) {
@@ -98,10 +111,32 @@ public class Transform {
 	}
 
 	public Transform add(Transform other) {
-		this.set(getX() + other.getX(), getY() + other.getY(), getRotation()
-				+ other.getRotation(), getScaleX() * other.getScaleX(),
-				getScaleY() * other.getScaleY());
+		set(getX() + other.getX(), 
+			getY() + other.getY(),
+			getRotation() + other.getRotation(),
+			getScaleX() * other.getScaleX(),
+			getScaleY() * other.getScaleY());
 
+		return this;
+	}
+	
+	public Transform substract(Transform other) {
+		set(getX() - other.getX(), 
+				getY() - other.getY(),
+				getRotation() - other.getRotation(),
+				getScaleX() / other.getScaleX(),
+				getScaleY() / other.getScaleY());
+
+			return this;
+	}
+
+	public Transform multiply(float scalar) {
+		set(getX() * scalar, 
+			getY() * scalar, 
+			getRotation() * scalar, 
+			getScaleX() * scalar, 
+			getScaleY() * scalar);
+		
 		return this;
 	}
 

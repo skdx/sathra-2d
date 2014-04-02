@@ -1,10 +1,9 @@
 package eu.sathra.example.ai;
 
-import android.view.animation.Animation;
 import eu.sathra.ai.AIContext;
 import eu.sathra.ai.TaskResult;
 import eu.sathra.scene.SceneNode;
-import eu.sathra.scene.animation.ScaleAnimation;
+import eu.sathra.scene.animation.Animation;
 
 public class DieTask extends PlayerTask {
 
@@ -13,8 +12,9 @@ public class DieTask extends PlayerTask {
 	private Animation mRespawnAnimation;
 	
 	public DieTask() {
-		mRespawnAnimation = new ScaleAnimation(0, 0, 1, 1, 300);
-		mRespawnAnimation.setRepeatCount(1);
+//		Transform from = new Transform(SPAWN_POINT_X, SPAWN_POINT_Y, 0, 0, 0);
+//		Transform to = new Transform(SPAWN_POINT_X, SPAWN_POINT_Y, 0, 1, 1);
+//		mRespawnAnimation = new Animation(from, to, new LinearInterpolator(), 2000, 1, true);
 	}
 	
 	@Override

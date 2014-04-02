@@ -4,43 +4,61 @@ import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
+import android.view.animation.LinearInterpolator;
 import eu.sathra.ai.Task;
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
 import eu.sathra.physics.Body;
-import eu.sathra.scene.animation.TranslateAnimation;
+import eu.sathra.scene.animation.Animation;
 import eu.sathra.util.Log;
 import eu.sathra.video.opengl.Sprite;
 
-public class ParticleEmitterNode extends SceneNode implements AnimationListener {
+public class ParticleEmitterNode extends SceneNode {
 
+	/**
+	 * Class describing the properties of generated particles.
+	 * 
+	 * @author Milosz Moczkowski
+	 * 
+	 */
 	public static class EmitParameters {
 
+		/**
+		 * Sprite of particle.
+		 */
 		public Sprite particle;
+
+		/**
+		 * The minimum amount of particles to be spawned every second.
+		 */
 		public float minEmission;
+
+		/**
+		 * The maximum amount of particles to be spawned every second.
+		 */
 		public float maxEmission;
+
+		/**
+		 * The minimum lifetime of spawned particle every second.
+		 */
 		public long minLifetime;
+
+		/**
+		 * The maximum lifetime of spawned particle every second.
+		 */
 		public long maxLifetime;
-		public float minSize;
-		public float maxSize;
-		public float velocityX; // per sec
-		public float velocityY; // per sec
-		public float rndVelocityX; // per sec
-		public float rndVelocityY; // per sec
+		public Transform direction = new Transform();
+		public Transform variance = new Transform();
 		public float width;
 		public float height;
 
 		@Deserialize({ "particle", "min_emision", "max_emision", "min_life",
-				"max_life", "min_size", "max_size", "velocity_x", "velocity_y",
-				"rnd_velocity_x", "rnd_velocity_y", "width", "height" })
-		@Defaults({ "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
-				"0" })
+				"max_life", "direction", "variance", "width", "height" })
+		@Defaults({ "0", "0", "0", "0", "0", Deserialize.NULL,
+				Deserialize.NULL, "0", "0" })
 		public EmitParameters(Sprite particle, float minEmission,
-				float maxEmission, long minLife, long maxLife, float minSize,
-				float maxSize, float velocityX, float velocityY,
-				float rndVelocityX, float rndVelocityY, float width,
+				float maxEmission, long minLife, long maxLife,
+				Transform direction, Transform variance, float width,
 				float height) {
 
 			this.particle = particle;
@@ -48,20 +66,16 @@ public class ParticleEmitterNode extends SceneNode implements AnimationListener 
 			this.maxEmission = maxEmission;
 			this.minLifetime = minLife;
 			this.maxLifetime = maxLife;
-			this.minSize = minSize;
-			this.maxSize = maxSize;
-			this.velocityX = velocityX;
-			this.velocityY = velocityY;
-			this.rndVelocityX = rndVelocityX;
-			this.rndVelocityY = rndVelocityY;
+			this.direction = direction;
+			this.variance = variance;
 			this.width = width;
 			this.height = height;
 		}
 
 	}
 
-	// Destroyer of the worlds!
-	private class NodeDestroyer implements AnimationListener {
+	// "Now, I am become Death, the destroyer of worlds."
+	private class NodeDestroyer implements Animation.Listener {
 
 		private SceneNode mChild;
 
@@ -70,21 +84,9 @@ public class ParticleEmitterNode extends SceneNode implements AnimationListener 
 		}
 
 		@Override
-		public void onAnimationEnd(Animation anim) {
+		public void onAnimationStopped(Animation anim) {
 			removeChild(mChild);
 		}
-
-		@Override
-		public void onAnimationRepeat(Animation anim) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onAnimationStart(Animation anim) {
-
-		}
-
 	}
 
 	private EmitParameters mParams;
@@ -155,13 +157,13 @@ public class ParticleEmitterNode extends SceneNode implements AnimationListener 
 		mParams.maxLifetime = max;
 	}
 
-	public void setParticleSize(float min, float max) {
-		if (max < min)
-			throw new IllegalArgumentException("max<min");
-
-		mParams.minSize = min;
-		mParams.maxSize = max;
-	}
+	// public void setParticleSize(float min, float max) {
+	// if (max < min)
+	// throw new IllegalArgumentException("max<min");
+	//
+	// mParams.minSize = min;
+	// mParams.maxSize = max;
+	// }
 
 	public void setEmitParameters(EmitParameters params) {
 		mParams = params;
@@ -184,34 +186,37 @@ public class ParticleEmitterNode extends SceneNode implements AnimationListener 
 			final long lifespan = (long) (mParams.minLifetime + (mParams.maxLifetime - mParams.minLifetime)
 					* mRandom.nextFloat());
 
-			float size = mParams.minSize + (mParams.maxSize - mParams.minSize)
-					* mRandom.nextFloat();
+			float scaleVariance = nextFloat();
+
+			float scaleX = mParams.direction.getScaleX()
+					+ mParams.variance.getScaleX() * scaleVariance;// scaleX*scaleVariance;
+			float scaleY = mParams.direction.getScaleY()
+					+ mParams.variance.getScaleY() * scaleVariance;
 
 			// Calculate spawn point
 			float spawnX = mParams.width * mRandom.nextFloat();
 			float spawnY = mParams.height * mRandom.nextFloat();
 
-			// Calculate velocity
-			float velX = mParams.velocityX + (1 - 2 * mRandom.nextFloat())
-					* mParams.rndVelocityX;
-			float velY = mParams.velocityY + (1 - 2 * mRandom.nextFloat())
-					* mParams.rndVelocityY;
+			float destX = spawnX + mParams.direction.getX()
+					+ mParams.variance.getX() * nextFloat();
+			float destY = spawnY + mParams.direction.getY()
+					+ mParams.variance.getY() * nextFloat();
 
-			// Calculate destination point
-			float destX = spawnX + velX * lifespan / 1000;
-			float destY = spawnY + velY * lifespan / 1000;
+			float destRot = mParams.direction.getRotation()
+					+ mParams.variance.getRotation() * nextFloat();
 
-			TranslateAnimation animation = new TranslateAnimation(spawnX,
-					destY, destX, spawnY, lifespan);
+			Transform from = new Transform(spawnX, spawnY,
+					mParams.direction.getRotation(), scaleX, scaleY);
+			Transform to = new Transform(destX, destY,
+					destRot, scaleX, scaleY);
 
-			animation.setRepeatCount(1);
+			Animation animation = new Animation(from, to,
+					new LinearInterpolator(), lifespan, 1, false);
 
 			SpriteNode particleNode = new SpriteNode(null, mParams.particle,
-					new Transform(spawnX, spawnY), true, animation, null, null, null);
+					null, true, animation, null, null, null);
 
-			animation.setAnimationListener(new NodeDestroyer(particleNode));
-
-			particleNode.setScale(size, size);
+			animation.setListener(new NodeDestroyer(particleNode));
 
 			addChild(particleNode);
 
@@ -221,20 +226,7 @@ public class ParticleEmitterNode extends SceneNode implements AnimationListener 
 		}
 	}
 
-	@Override
-	public void onAnimationEnd(Animation anim) {
-
-	}
-
-	@Override
-	public void onAnimationRepeat(Animation anim) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onAnimationStart(Animation anim) {
-		// TODO Auto-generated method stub
-
+	private float nextFloat() {
+		return mRandom.nextFloat() * 2 - 1;
 	}
 }

@@ -7,13 +7,12 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.SuppressLint;
 import android.graphics.Matrix;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import eu.sathra.ai.AIContext;
 import eu.sathra.ai.Task;
 import eu.sathra.io.annotations.Defaults;
 import eu.sathra.io.annotations.Deserialize;
 import eu.sathra.physics.Body;
+import eu.sathra.scene.animation.Animation;
 
 /***
  * Base class for all scene nodes. Scene node is a part of hierarchical scene
@@ -181,14 +180,9 @@ public class SceneNode {
 			mAbsoluteTransform.add(getTransform());
 
 			// Apply animation
-//			if (mCurrentAnimation != null) {
-//
-//				boolean animated = mCurrentAnimation.getTransformation(
-//						System.currentTimeMillis(), w);
-//
-//				if (animated)
-//					setMatrix(mTransformation.getMatrix());
-//			}
+			if (mCurrentAnimation != null) {
+				mCurrentAnimation.animate(delta, time, mTransform);
+			}
 
 			gl.glPushMatrix();
 			//gl.glTranslatef(getX(), getY(), 0);
@@ -196,6 +190,9 @@ public class SceneNode {
 			gl.glTranslatef(getX() / getAbsoluteScaleX(), getY()
 					/ getAbsoluteScaleY(), 0);
 
+			// TODO: rotation
+			//gl.glRotatef(mTransform.getRotation(), 0, getX(), getY());
+			
 			// Draw yourself
 			draw(gl, time, delta);
 
@@ -285,7 +282,7 @@ public class SceneNode {
 
 	public void startAnimation(Animation animation) {
 		mCurrentAnimation = animation;
-		mCurrentAnimation.startNow();
+		mCurrentAnimation.start();
 	}
 
 	public Animation getAnimation() {
